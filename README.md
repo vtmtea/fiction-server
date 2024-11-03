@@ -1,1 +1,1 @@
-# fiction-server
+# 基于 Go 语言的小说爬虫程序
