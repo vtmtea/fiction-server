@@ -1,11 +1,12 @@
 package user
 
 import (
-	"github.com/gin-gonic/gin"
-	. "plover.com/spider/handler"
-	"plover.com/spider/model"
-	"plover.com/spider/pkg/errno"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	. "vtmtea.com/fiction/handler"
+	"vtmtea.com/fiction/model"
+	"vtmtea.com/fiction/pkg/errno"
 )
 
 // @Summary Update a user info by the user identifier

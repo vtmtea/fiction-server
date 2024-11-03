@@ -2,9 +2,9 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	. "plover.com/spider/handler"
-	"plover.com/spider/model"
-	"plover.com/spider/pkg/errno"
+	. "vtmtea.com/fiction/handler"
+	"vtmtea.com/fiction/model"
+	"vtmtea.com/fiction/pkg/errno"
 )
 
 // @Summary Add new user to the database

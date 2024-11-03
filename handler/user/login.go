@@ -2,11 +2,11 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	. "plover.com/spider/handler"
-	"plover.com/spider/model"
-	"plover.com/spider/pkg/auth"
-	"plover.com/spider/pkg/errno"
-	"plover.com/spider/pkg/token"
+	. "vtmtea.com/fiction/handler"
+	"vtmtea.com/fiction/model"
+	"vtmtea.com/fiction/pkg/auth"
+	"vtmtea.com/fiction/pkg/errno"
+	"vtmtea.com/fiction/pkg/token"
 )
 
 // @Summary Login generates the authentication token

@@ -4,18 +4,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"net/http"
-	"os"
-	"plover.com/spider/config"
-	"plover.com/spider/model"
-	v "plover.com/spider/pkg/version"
-	"plover.com/spider/router"
-	"plover.com/spider/router/middleware"
-	"time"
+	"vtmtea.com/fiction/config"
+	"vtmtea.com/fiction/model"
+	v "vtmtea.com/fiction/pkg/version"
+	"vtmtea.com/fiction/router"
+	"vtmtea.com/fiction/router/middleware"
 )
 
 var (
@@ -23,16 +24,6 @@ var (
 	version = pflag.BoolP("version", "v", false, "show version info.")
 )
 
-// @title Apiserver Example API
-// @version 1.0
-// @description apiserver demo
-
-// @contact.name yufenghui
-// @contact.url http://www.swagger.io/support
-// @contact.email yufenghui@hotmail.com
-
-// @host localhost:8080
-// @BasePath /v1
 func main() {
 
 	pflag.Parse()

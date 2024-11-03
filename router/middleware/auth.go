@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"plover.com/spider/handler"
-	"plover.com/spider/pkg/errno"
-	"plover.com/spider/pkg/token"
+	"vtmtea.com/fiction/handler"
+	"vtmtea.com/fiction/pkg/errno"
+	"vtmtea.com/fiction/pkg/token"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
