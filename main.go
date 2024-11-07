@@ -29,10 +29,10 @@ func main() {
 	pflag.Parse()
 
 	if *version {
-		v := v.Get()
-		marshalled, err := json.MarshalIndent(&v, "", "  ")
+		version := v.Get()
+		marshalled, err := json.MarshalIndent(&version, "", "  ")
 		if err != nil {
-			fmt.Printf("%v\n", err)
+			fmt.Printf("%version\n", err)
 			os.Exit(1)
 		}
 
@@ -99,5 +99,5 @@ func pingServer() error {
 		time.Sleep(time.Second)
 	}
 
-	return errors.New("Cannot connect to the router.")
+	return errors.New("cannot connect to the router")
 }

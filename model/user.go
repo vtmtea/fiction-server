@@ -2,7 +2,7 @@ package model
 
 import "vtmtea.com/fiction/pkg/auth"
 
-// User represents a registered user.
+// UserModel User represents a registered user.
 type UserModel struct {
 	BaseModel
 	Username string `json:"username" gorm:"column:username;not null"`

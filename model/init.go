@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	log "github.com/sirupsen/logrus"
@@ -43,6 +44,8 @@ func openDB(username, password, addr, name string) *gorm.DB {
 	db, err := gorm.Open("mysql", config)
 	if err != nil {
 		log.Errorf("Database connection failed. Database name: %s", name)
+	} else {
+		log.Infof("Database %s connected.", name)
 	}
 
 	// set for db connection
