@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"vtmtea.com/fiction/pkg/crawl"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -79,6 +80,8 @@ func main() {
 			log.Info(http.ListenAndServeTLS(viper.GetString("tls.addr"), cert, key, g).Error())
 		}()
 	}
+
+	go crawl.List("https://www.beqege.cc/")
 
 	log.Infof("Start to listening the incoming requests on http address: %s", viper.GetString("addr"))
 	log.Info(http.ListenAndServe(viper.GetString("addr"), g).Error())
