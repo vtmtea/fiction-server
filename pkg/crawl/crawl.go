@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gocolly/colly"
 	"math/rand"
+	"vtmtea.com/fiction/handler/log"
 	"vtmtea.com/fiction/util"
 )
 
@@ -15,19 +16,22 @@ func List(url string) {
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("Accept", "*/*")
 		logStr := fmt.Sprintf("正在抓取列表页: %s", r.URL)
+		log.Create(logStr, 1)
 	})
 
 	c.OnResponse(func(r *colly.Response) {
-		fmt.Println("Got content from: ", r.Request.URL)
+		logStr := fmt.Sprintf("成功抓取列表页: %s", r.Request.URL)
+		log.Create(logStr, 1)
 	})
 
 	c.OnXML("//*[@id='newscontent']/div[@class='l']/ul/li/span[@class='s2']/a", func(e *colly.XMLElement) {
-		fmt.Println("Find book: ", e.Text)
+		logStr := fmt.Sprintf("发现小说: %s", e.Text)
+		log.Create(logStr, 1)
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
-		fmt.Println("Get error", err.Error(), string(r.Body))
-		fmt.Println("Get error code: ", r.StatusCode)
+		logStr := fmt.Sprintf("抓取错误，错误码: %d，错误原因：%s", r.StatusCode, err.Error())
+		log.Create(logStr, 2)
 	})
 
 	err := c.Visit(url)
