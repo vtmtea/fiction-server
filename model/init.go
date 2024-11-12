@@ -2,9 +2,9 @@ package model
 
 import (
 	"fmt"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -33,7 +33,7 @@ func InitSelfDB() *gorm.DB {
 }
 
 func openDB(username, password, addr, name string) *gorm.DB {
-	config := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=%t&loc=%s",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=%t&loc=%s",
 		username,
 		password,
 		addr,
@@ -41,7 +41,7 @@ func openDB(username, password, addr, name string) *gorm.DB {
 		//"Asia/Shanghai",
 		"Local")
 
-	db, err := gorm.Open("mysql", config)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Errorf("Database connection failed. Database name: %s", name)
 	} else {
@@ -55,14 +55,15 @@ func openDB(username, password, addr, name string) *gorm.DB {
 }
 
 func setupDB(db *gorm.DB) {
-	db.LogMode(viper.GetBool("gormlog"))
+	//db.LogMode(viper.GetBool("gormlog"))
 
+	sqlDB, _ := db.DB()
 	// 用于设置最大打开的连接数，默认值为0表示不限制.设置最大的连接数，可以避免并发太高导致连接mysql出现too many connections的错误。
-	db.DB().SetMaxOpenConns(100)
+	sqlDB.SetMaxOpenConns(100)
 	// 用于设置闲置的连接数.设置闲置的连接数则当开启的一个连接使用完成后可以放在池里等候下一次使用。
-	db.DB().SetMaxIdleConns(0)
+	sqlDB.SetMaxIdleConns(0)
 }
 
 func (db *Database) Close() {
-	DB.Self.Close()
+	//DB.Self.Close()
 }

@@ -3,8 +3,10 @@ package crawl
 import (
 	"fmt"
 	"github.com/gocolly/colly"
+	"github.com/sirupsen/logrus"
 	"math/rand"
 	"vtmtea.com/fiction/handler/log"
+	"vtmtea.com/fiction/model"
 	"vtmtea.com/fiction/util"
 )
 
@@ -12,6 +14,7 @@ func List(url string) {
 	c := colly.NewCollector()
 	c.UserAgent = RandomAgent()
 	c.AllowURLRevisit = true
+	var logs []model.Log
 
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("Accept", "*/*")
@@ -26,7 +29,15 @@ func List(url string) {
 
 	c.OnXML("//*[@id='newscontent']/div[@class='l']/ul/li/span[@class='s2']/a", func(e *colly.XMLElement) {
 		logStr := fmt.Sprintf("发现小说: %s", e.Text)
-		log.Create(logStr, 1)
+		logs = append(logs, model.Log{
+			Type:    1,
+			Message: logStr,
+		})
+	})
+
+	c.OnScraped(func(r *colly.Response) {
+		logrus.Printf("%v\n", logs)
+		log.CreateMultiple(logs)
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
