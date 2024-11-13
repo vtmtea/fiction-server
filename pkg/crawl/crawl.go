@@ -5,6 +5,7 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"math/rand"
+	"strings"
 	"vtmtea.com/fiction/handler/log"
 	"vtmtea.com/fiction/model"
 	"vtmtea.com/fiction/util"
@@ -27,17 +28,28 @@ func List(url string) {
 		log.Create(logStr, 1)
 	})
 
-	c.OnXML("//*[@id='newscontent']/div[@class='l']/ul/li/span[@class='s2']/a", func(e *colly.XMLElement) {
-		logStr := fmt.Sprintf("发现小说: %s", e.Text)
-		logs = append(logs, model.Log{
-			Type:    1,
-			Message: logStr,
-		})
+	c.OnXML("//*[@id='newscontent']/div[@class='l']/ul/li", func(e *colly.XMLElement) {
+		categoryReplaceChars := []string{"[", "", "]", ""}
+		categoryReplacer := strings.NewReplacer(categoryReplaceChars...)
+
+		bookUrl := e.ChildAttr("/span[@class='s2']/a", "href")
+		bookName := e.ChildText("/span[@class='s2']/a")
+		category := e.ChildText("/span[@class='s1']")
+		lastChapterTitle := e.ChildText("/span[@class='s3']/a")
+		lastChapterUrl := e.ChildAttr("/span[@class='s3']/a", "href")
+		logrus.Infof("Get book: %s, url: %s, category: %s", bookName, bookUrl, categoryReplacer.Replace(category))
+		logrus.Infof("Last chapter: %s, url: %s", lastChapterTitle, lastChapterUrl)
+		//logStr := fmt.Sprintf("发现小说: %s", e.Text)
+		//logs = append(logs, model.Log{
+		//	Type:    1,
+		//	Message: logStr,
+		//})
+
 	})
 
 	c.OnScraped(func(r *colly.Response) {
 		logrus.Printf("%v\n", logs)
-		log.CreateMultiple(logs)
+		//log.CreateMultiple(logs)
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
