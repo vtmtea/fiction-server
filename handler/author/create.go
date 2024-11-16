@@ -5,18 +5,19 @@ import (
 	"vtmtea.com/fiction/model"
 )
 
-func Create(name string) {
+func Create(name string) model.Author {
 	newAuthor := model.Author{
 		Name: name,
 	}
 	author := model.Author{}
-	model.DB.Self.Where("name = ?", name).First(&author)
+	model.DB.Self.Where("name = ?", name).Find(&author)
 
 	if author.ID > 0 {
 		logrus.Println("Author already exists")
-		return
+		return author
 	}
-	model.DB.Self.Omit("deleteAt").Create(&newAuthor)
+	model.DB.Self.Omit("deletedAt").Create(&newAuthor)
+	return newAuthor
 }
 
 func CreateMultiple(names []string) {
@@ -24,5 +25,5 @@ func CreateMultiple(names []string) {
 	for _, name := range names {
 		authors = append(authors, model.Author{Name: name})
 	}
-	model.DB.Self.Omit("deleteAt").Create(&authors)
+	model.DB.Self.Omit("deletedAt").Create(&authors)
 }
