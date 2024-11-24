@@ -4,17 +4,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
-	"os"
-	"time"
-	"vtmtea.com/fiction/pkg/crawl"
-
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	"net/http"
+	"os"
+	"time"
 	"vtmtea.com/fiction/config"
 	"vtmtea.com/fiction/model"
+	"vtmtea.com/fiction/pkg/crawl"
 	v "vtmtea.com/fiction/pkg/version"
 	"vtmtea.com/fiction/router"
 	"vtmtea.com/fiction/router/middleware"
@@ -81,7 +80,11 @@ func main() {
 		}()
 	}
 
-	go crawl.List("https://www.beqege.cc/")
+	//go crawl.List("https://www.beqege.cc/")
+
+	//go crawl.Single("https://www.beqege.cc/16647/")
+
+	go crawl.Content(39193)
 
 	log.Infof("Start to listening the incoming requests on http address: %s", viper.GetString("addr"))
 	log.Info(http.ListenAndServe(viper.GetString("addr"), g).Error())

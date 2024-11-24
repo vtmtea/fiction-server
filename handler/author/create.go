@@ -1,20 +1,12 @@
 package author
 
 import (
-	"github.com/sirupsen/logrus"
 	"vtmtea.com/fiction/model"
 )
 
 func Create(name string) model.Author {
 	newAuthor := model.Author{
 		Name: name,
-	}
-	author := model.Author{}
-	model.DB.Self.Where("name = ?", name).Find(&author)
-
-	if author.ID > 0 {
-		logrus.Println("Author already exists")
-		return author
 	}
 	model.DB.Self.Omit("deletedAt").Create(&newAuthor)
 	return newAuthor

@@ -5,6 +5,8 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/sirupsen/logrus"
 	"math/rand"
+	"regexp"
+	"strings"
 	"time"
 	"vtmtea.com/fiction/handler/author"
 	"vtmtea.com/fiction/handler/log"
@@ -171,7 +173,9 @@ func Single(bookUrl string) {
 		for _, m := range chapters {
 			m.BookID = bookModel.ID
 		}
-		chapter.CreateMultiple(chapters[bookChapterCount:])
+		if bookChapterCount < int64(len(chapters)) {
+			chapter.CreateMultiple(chapters[bookChapterCount:])
+		}
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
@@ -181,7 +185,51 @@ func Single(bookUrl string) {
 
 	err = c.Visit(bookUrl)
 	if err != nil {
+		log.Create(fmt.Sprintf("访问%s出错: %s", bookUrl, err.Error()), 2)
+	}
+}
+
+func Content(chapterId int) {
+	chapterModel := chapter.GetChapter(chapterId)
+
+	if chapterModel.ID == 0 {
 		return
+	}
+
+	chapterUrl := chapterModel.Source.Domain + chapterModel.SourceURL
+
+	c := colly.NewCollector(
+		//colly.AllowedDomains(chapterModel.Source.Domain),
+		colly.UserAgent(RandomAgent()),
+		colly.AllowURLRevisit(),
+	)
+
+	c.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("Accept", "*/*")
+		logStr := fmt.Sprintf("正在抓取章节: %s", r.URL)
+		log.Create(logStr, 1)
+	})
+
+	c.OnResponse(func(r *colly.Response) {
+		logStr := fmt.Sprintf("成功抓取章节: %s", r.Request.URL)
+		log.Create(logStr, 1)
+	})
+
+	c.OnXML("//*[@id='content']", func(e *colly.XMLElement) {
+		content := strings.ReplaceAll(e.Text, "【告知安卓书友，越来越多免费站点将会关闭失效，安卓app鱼目混珠，找一个安全稳定看书的app非常有必要，站长强烈推荐换源APP，听书、换源、找书超好使！】", "")
+		zp := regexp.MustCompile(`[\t\n\f\r]`)
+		contentCollection := zp.Split(content, -1)
+		chapter.UpdateContent(contentCollection, chapterId)
+	})
+
+	c.OnError(func(r *colly.Response, err error) {
+		logStr := fmt.Sprintf("抓取%s错误，错误码: %d，错误原因：%s", r.Request.URL, r.StatusCode, err.Error())
+		log.Create(logStr, 2)
+	})
+
+	err := c.Visit(chapterUrl)
+	if err != nil {
+		log.Create(fmt.Sprintf("访问%s出错: %s", chapterUrl, err.Error()), 2)
 	}
 }
 

@@ -1,12 +1,16 @@
 package chapter
 
 import (
-	"github.com/sirupsen/logrus"
+	"fmt"
+	"vtmtea.com/fiction/handler/log"
 	"vtmtea.com/fiction/model"
 )
 
 func CreateMultiple(chapters []*model.Chapter) {
-	if err := model.DB.Self.Omit("deletedAt").CreateInBatches(chapters, 300).Error; err != nil {
-		logrus.Errorln(err.Error())
+	err := model.DB.Self.Omit("deletedAt").CreateInBatches(chapters, 300).Error
+	if err != nil {
+		log.Create(fmt.Sprintf("入库章节列表错误：%s", err.Error()), 2)
+		return
 	}
+	log.Create(fmt.Sprintf("抓取章节数量: %d", cap(chapters)), 1)
 }
